@@ -1,3 +1,5 @@
+use std::fmt;
+
 static INST: [&'static str; 5] = [
     "LLLRLLULLDDLDUDRDDURLDDRDLRDDRUULRULLLDLUURUUUDLUUDLRUDLDUDURRLDRRRUULUURLUDRURULRLRLRRUULRUUUDRRDDRLLLDDLLUDDDLLRLLULULRRURRRLDRLDLLRURDULLDULRUURLRUDRURLRRDLLDDURLDDLUDLRLUURDRDRDDUURDDLDDDRUDULDLRDRDDURDLUDDDRUDLUDLULULRUURLRUUUDDRLDULLLUDLULDUUDLDLRRLLLRLDUDRUULDLDRDLRRDLDLULUUDRRUDDDRDLRLDLRDUDRULDRDURRUULLUDURURUUDRDRLRRDRRDRDDDDLLRURULDURDLUDLUULDDLLLDULUUUULDUDRDURLURDLDDLDDUULRLUUDLDRUDRURURRDDLURURDRLRLUUUURLLRR",
     "UUUUURRRURLLRRDRLLDUUUUDDDRLRRDRUULDUURURDRLLRRRDRLLUDURUDLDURURRLUDLLLDRDUDRDRLDRUDUDDUULLUULLDUDUDDRDUUUDLULUDUULLUUULURRUDUULDUDDRDURRLDDURLRDLULDDRUDUDRDULLRLRLLUUDDURLUUDLRUUDDLLRUURDUDLLDRURLDURDLRDUUDLRLLRLRURRUDRRLRDRURRRUULLUDLDURDLDDDUUDRUUUDULLLRDRRDRLURDDRUUUDRRUUDLUDDDRRRRRLRLDLLDDLRDURRURLLLULURULLULRLLDDLDRLDULLDLDDDRLUDDDUDUDRRLRDLLDULULRLRURDLUDDLRUDRLUURRURDURDRRDRULUDURRLULUURDRLDLRUDLUDRURLUDUUULRRLRRRULRRRLRLRLULULDRUUDLRLLRLLLURUUDLUDLRURUDRRLDLLULUDRUDRLLLRLLDLLDUDRRURRLDLUUUURDDDUURLLRRDRUUURRRDRUDLLULDLLDLUDRRDLLDDLDURLLDLLDLLLDR",
@@ -6,7 +8,7 @@ static INST: [&'static str; 5] = [
     "UDDDRLDRDULDRLRDUDDLDLLDDLUUURDDDLUDRDUDLDURLUURUDUULUUULDUURLULLRLUDLLURUUUULRLRLLLRRLULLDRUULURRLLUDUDURULLLRRRRLRUULLRDRDRRDDLUDRRUULUDRUULRDLRDRRLRRDRRRLULRULUURRRULLRRRURUDUURRLLDDDUDDULUULRURUDUDUDRLDLUULUDDLLLLDRLLRLDULLLRLLDLUUDURDLLRURUUDDDDLLUDDRLUUDUDRDRLLURURLURRDLDDDULUURURURRLUUDUDLDLDDULLURUDLRLDLRLDLDUDULURDUDRLURRRULLDDDRDRURDDLDLULUDRUULDLULRDUUURLULDRRULLUDLDRLRDDUDURRRURRLRDUULURUUDLULDLRUUULUDRDRRUDUDULLDDRLRDLURDLRLUURDRUDRDRUDLULRUDDRDLLLRLURRURRLDDDUDDLRDRRRULLUUDULURDLDRDDDLDURRLRRDLLDDLULULRRDUDUUDUULRDRRDURDDDDUUDDLUDDUULDRDDULLUUUURRRUUURRULDRRDURRLULLDU",
 ];
 
-#[derive(Debug, Clone, Copy)]
+#[derive(Clone, Copy)]
 enum Number {
     ONE = 1,
     TWO,
@@ -17,52 +19,81 @@ enum Number {
     SEVEN,
     EIGHT,
     NINE,
+    A,
+    B,
+    C,
+    D,
 }
 
 impl Number {
     fn move_up(self) -> Self {
         match self {
-            Number::ONE | Number::TWO | Number::THREE => self,
-            Number::FOUR => Number::ONE,
-            Number::FIVE => Number::TWO,
-            Number::SIX => Number::THREE,
-            Number::SEVEN => Number::FOUR,
-            Number::EIGHT => Number::FIVE,
-            Number::NINE => Number::SIX,
+            Number::THREE => Number::ONE,
+            Number::SIX => Number::TWO,
+            Number::SEVEN => Number::THREE,
+            Number::EIGHT => Number::FOUR,
+            Number::A => Number::SIX,
+            Number::B => Number::SEVEN,
+            Number::C => Number::EIGHT,
+            Number::D => Number::B,
+            _ => self,
+
         }
     }
     fn move_down(self) -> Self {
         match self {
-            Number::ONE => Number::FOUR,
-            Number::TWO => Number::FIVE,
-            Number::THREE => Number::SIX,
-            Number::FOUR => Number::SEVEN,
-            Number::FIVE => Number::EIGHT,
-            Number::SIX => Number::NINE,
-            Number::SEVEN | Number::EIGHT | Number::NINE => self,
+            Number::ONE => Number::THREE,
+            Number::TWO => Number::SIX,
+            Number::THREE => Number::SEVEN,
+            Number::FOUR => Number::EIGHT,
+            Number::SIX => Number::A,
+            Number::SEVEN => Number::B,
+            Number::EIGHT => Number::C,
+            Number::B => Number::D,
+            _ => self,
         }
     }
     fn move_left(self) -> Self {
         match self {
-            Number::ONE | Number::FOUR | Number::SEVEN => self,
-            Number::TWO => Number::ONE,
             Number::THREE => Number::TWO,
-            Number::FIVE => Number::FOUR,
+            Number::FOUR => Number::THREE,
             Number::SIX => Number::FIVE,
+            Number::SEVEN => Number::SIX,
             Number::EIGHT => Number::SEVEN,
             Number::NINE => Number::EIGHT,
+            Number::B => Number::A,
+            Number::C => Number::B,
+            _ => self,
         }
     }
     fn move_right(self) -> Self {
         match self {
-            Number::THREE | Number::SIX | Number::NINE => self,
-            Number::ONE => Number::TWO,
             Number::TWO => Number::THREE,
-            Number::FOUR => Number::FIVE,
+            Number::THREE => Number::FOUR,
             Number::FIVE => Number::SIX,
+            Number::SIX => Number::SEVEN,
             Number::SEVEN => Number::EIGHT,
             Number::EIGHT => Number::NINE,
+            Number::A => Number::B,
+            Number::B => Number::C,
+            _ => self,
         }
+    }
+}
+
+impl fmt::Display for Number {
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        write!(
+            f,
+            "{}",
+            match *self as u8 {
+                10 => "A".to_string(),
+                11 => "B".to_string(),
+                12 => "C".to_string(),
+                13 => "D".to_string(),
+                _ => (*self as u8).to_string(), // ugly af
+            }
+        )
     }
 }
 
@@ -79,6 +110,6 @@ fn main() {
                 _ => panic!("Unkown Instruction"),
             }
         }
-        print!("{:?}", position as u8);
+        print!("{}", position);
     }
 }
